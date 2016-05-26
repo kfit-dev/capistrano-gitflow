@@ -16,24 +16,24 @@ namespace :gitflow do
   end
 
   def last_staging_tag()
-    last_tag_matching('staging-*')
+    last_tag_matching("staging-#{local_branch}-*")
   end
 
   def next_staging_tag
     hwhen = Time.now.strftime('%Y-%m-%d_%H-%M-%S')
 
-    last_staging_tag = last_tag_matching("staging-#{hwhen}-*")
-    new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
+    last_staging_tag = last_tag_matching("staging-#{local_branch}-#{hwhen}-*")
+    new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-#{local_branch}-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
                        $1.to_i + 1
                      else
                        1
                      end
 
-    "#{stage}-#{hwhen}-#{new_tag_serial}"
+    "#{stage}-#{local_branch}-#{hwhen}-#{new_tag_serial}"
   end
 
   def last_production_tag()
-    last_tag_matching('production-*')
+    last_tag_matching('production-#{local_branch}-*')
   end
 
   def using_git?
