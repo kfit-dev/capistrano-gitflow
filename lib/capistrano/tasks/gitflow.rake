@@ -156,18 +156,8 @@ git push origin #{local_branch}
 
     if new_production_tag == last_production_tag
       puts "Not re-tagging #{last_production_tag} because it already exists"
-      ask(:really_deploy, "Do you really want to deploy #{last_production_tag}? [y/N]")
-      really_deploy = fetch(:really_deploy)
-
-      exit(1) unless really_deploy =~ /^[Yy]$/
     else
       puts "Preparing to promote staging tag '#{promote_to_production_tag}' to '#{new_production_tag}'"
-      unless ENV['TAG']
-        ask(:really_deploy, "Do you really want to deploy #{new_production_tag}? [y/N]")
-        really_deploy = fetch(:really_deploy)
-
-        exit(1) unless really_deploy =~ /^[Yy]$/
-      end
       puts "Promoting staging tag #{promote_to_production_tag} to production as '#{new_production_tag}'"
       system "git tag -a -m 'tagging current code for deployment to production' #{new_production_tag} #{promote_to_production_tag}"
     end
