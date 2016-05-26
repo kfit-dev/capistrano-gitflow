@@ -164,6 +164,11 @@ git push origin #{local_branch}
 
     set :branch, new_production_tag
   end
+
+  desc "Only deploy to production if in master branch"
+  task :check_master do
+    abort "==============Sorry developer, you can only deploy to production in master branch. Try again.==============" unless %w(master production-hotfix).include?(local_branch)
+  end
 end
 
 namespace :deploy do
@@ -176,3 +181,4 @@ end
 
 before "deploy:updating", "gitflow:calculate_tag"
 before "gitflow:calculate_tag", "gitflow:verify_up_to_date"
+before "gitflow:tag_production", "gitflow:check_master"
