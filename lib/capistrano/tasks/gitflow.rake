@@ -20,7 +20,7 @@ namespace :gitflow do
   end
 
   def next_staging_tag
-    hwhen = Time.now.strftime('%Y-%m-%d_%H-%M-%S')
+    hwhen = Time.now.utc.strftime('%Y-%m-%d_%H-%M-%S-utc')
 
     last_staging_tag = last_tag_matching("staging-#{local_branch}-#{hwhen}-*")
     new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-#{local_branch}-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
@@ -74,7 +74,7 @@ git push origin #{local_branch}
       `git fetch`
 
       unless Rake::Task["gitflow:tag_#{stage}"].nil?
-        invoke "gitflow:tag_#{stage}" 
+        invoke "gitflow:tag_#{stage}"
 
         system "git push --tags origin #{local_branch}"
         if $? != 0
@@ -93,9 +93,9 @@ git push origin #{local_branch}
                else
                  abort "Unsupported stage #{stage}"
                end
-    
+
     to_tag = ENV['TAG']
-    to_tag ||= begin 
+    to_tag ||= begin
                  puts "Calculating 'end' tag for :commit_log for '#{stage}'"
                  to_tag = if stage == :production
                             last_staging_tag
