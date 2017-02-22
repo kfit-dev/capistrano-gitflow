@@ -23,7 +23,7 @@ namespace :gitflow do
     hwhen = Time.now.utc.strftime('%Y-%m-%d_%H-%M-%S-utc')
 
     last_staging_tag = last_tag_matching("staging-#{local_branch}-#{hwhen}-*")
-    new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-#{local_branch}-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
+    new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-master-[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{2}-[0-9]{2}-[0-9]{2}-utc-[0-9]*/
                        $1.to_i + 1
                      else
                        1
