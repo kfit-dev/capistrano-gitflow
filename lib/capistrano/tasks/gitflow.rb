@@ -25,6 +25,11 @@ namespace :gitflow do
     gitflow_tag_production
   end
 
+  desc "Only deploy to production if in master branch"
+  task :check_master do
+    gitflow_check_master
+  end
+
   task :cleanup_tags do
     gitflow_cleanup_tags
   end

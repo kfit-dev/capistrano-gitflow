@@ -17,6 +17,7 @@ module CapistranoGitFlow
       else
         before "deploy:update_code", "gitflow:verify_up_to_date"
       end
+      before "gitflow:tag_production", "gitflow:check_master"
       after "gitflow:verify_up_to_date", "gitflow:calculate_tag"
     end
 
@@ -207,6 +208,10 @@ module CapistranoGitFlow
       end
 
       set :branch, new_production_tag
+    end
+
+    def gitflow_check_master
+      abort "==============Sorry developer, you can only deploy to production in master branch. Try again.==============" unless %w(master production-hotfix).include?(fetch(:local_branch))
     end
 
     def gitflow_cleanup_tags
