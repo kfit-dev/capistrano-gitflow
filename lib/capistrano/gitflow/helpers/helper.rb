@@ -42,7 +42,7 @@ module CapistranoGitFlow
     end
 
     def gitflow_last_staging_tag
-      gitflow_last_tag_matching('staging-*')
+      gitflow_last_tag_matching("staging-#{fetch(:local_branch)}-*")
     end
 
     def gitflow_ask_confirm(message)
@@ -56,23 +56,19 @@ module CapistranoGitFlow
 
     def gitflow_next_staging_tag
       hwhen  = Time.now.utc.to_date.to_s
-      who = `whoami`.chomp.to_url
-      what = ENV['TAG_NAME'] ? ENV['TAG_NAME'] : gitflow_ask_confirm("What does this release introduce? (this will be normalized and used in the tag for this release) ")
 
-      abort "No tag has been provided: #{what.inspect}" if what == ''
-
-      last_staging_tag = gitflow_last_tag_matching("staging-#{hwhen}-*")
-      new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
+      last_staging_tag = gitflow_last_tag_matching("staging-#{fetch(:local_branch)}-#{hwhen}-*")
+      new_tag_serial = if last_staging_tag && last_staging_tag =~ /staging-#{fetch(:local_branch)}-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/
         $1.to_i + 1
       else
         1
       end
 
-      "#{gitflow_stage}-#{hwhen}-#{new_tag_serial}-#{who}-#{what.to_url}"
+      "#{gitflow_stage}-#{fetch(:local_branch)}-#{hwhen}-#{new_tag_serial}"
     end
 
     def gitflow_last_production_tag()
-      gitflow_last_tag_matching('production-*')
+      gitflow_last_tag_matching("production-#{fetch(:local_branch)}-*")
     end
 
     def gitflow_using_git?
@@ -218,7 +214,7 @@ module CapistranoGitFlow
       return if fetch(:gitflow_keep_tags).nil?
       tags = `git log --tags  --pretty="format:%at %D" | grep 'tag:' |sort -n | awk '{$1=""; print $0}' | tr "," "\n"| sed 's/tag:*//' | sed -e 's/^[ \t]*//'`
       tags = tags.split.reject{|tag| tag.nil? || tag.empty?  }
-      tags = tags.select { |tag| tag =~ /^(staging|production){1}-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/ }
+      tags = tags.select { |tag| tag =~ /^(staging|production){1}-.*-[0-9]{4}-[0-9]{2}-[0-9]{2}\-([0-9]*)/ }
       if tags.count >= fetch(:gitflow_keep_tags)
         puts "Keeping #{fetch(:gitflow_keep_tags)} Tags from total #{tags.count}"
         tags_to_delete = (tags - tags.last(fetch(:gitflow_keep_tags)))
