@@ -9,6 +9,7 @@ include CapistranoGitFlow::Helper
 unless defined?(Sinatra)
   if gitflow_using_cap3?
     require 'capistrano/all'
+    require 'capistrano/deploy'
     require  File.join(File.dirname(__FILE__), 'tasks', 'gitflow')
   else
     require 'capistrano'
