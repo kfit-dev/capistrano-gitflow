@@ -146,13 +146,7 @@ module CapistranoGitFlow
       if ENV['git_log_command'] && ENV['git_log_command'].strip != ''
         command = "git #{ENV['git_log_command']} #{from_tag}..#{to_tag}"
       else
-        # default compare command
-        # be awesome for github
-        if `git config remote.origin.url` =~ /git@github.com:(.*)\/(.*).git/
-          command = "open https://github.com/#{$1}/#{$2}/compare/#{from_tag}...#{to_tag}"
-        else
-          command = "git log #{from_tag}..#{to_tag}"
-        end
+        command = "git log #{from_tag}..#{to_tag}"
       end
       puts "Displaying commits from #{from_tag} to #{to_tag} via:\n#{command}"
       system command
