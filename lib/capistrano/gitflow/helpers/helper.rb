@@ -12,6 +12,10 @@ module CapistranoGitFlow
     end
 
     def gitflow_callbacks
+      repo_url = fetch(:repo_url) || ENV['PROJECT_REPOSITORY']
+      puts "Set origin to #{repo_url}"
+      system "git remote set-url origin #{repo_url}"
+
       if gitflow_using_cap3?
         before "deploy", "gitflow:verify_up_to_date"
       else
