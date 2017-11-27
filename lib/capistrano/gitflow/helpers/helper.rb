@@ -1,7 +1,5 @@
 module CapistranoGitFlow
   module Helper
-
-
     def gitflow_stage
       original_stage = fetch(:stage)
       original_stage.to_s.include?(":") ? original_stage.split(':').reverse[0] : original_stage
@@ -13,8 +11,8 @@ module CapistranoGitFlow
 
     def gitflow_callbacks
       repo_url = fetch(:repo_url) || ENV['PROJECT_REPOSITORY']
-      puts "Set origin to #{repo_url}"
-      system "git remote set-url origin #{repo_url}"
+
+      system "git remote set-url origin #{repo_url}" if repo_url&.present?
 
       if gitflow_using_cap3?
         before "deploy", "gitflow:verify_up_to_date"
