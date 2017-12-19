@@ -221,6 +221,11 @@ module CapistranoGitFlow
         puts "Keeping #{fetch(:gitflow_keep_tags)} Tags from total #{tags.count}"
         tags_to_delete = (tags - tags.last(fetch(:gitflow_keep_tags)))
         if tags_to_delete.any?
+          max_number_to_delete = fetch(:gitflow_max_tags_to_delete) rescue tags_to_delete.count
+          if max_number_to_delete < tags_to_delete.count
+            puts "Deleting #{max_number_to_delete} out of #{tags_to_delete.count} Tags due to rate limiting"
+            tags_to_delete = tags_to_delete.first(max_number_to_delete)
+          end
           system "git tag -d #{tags_to_delete.join(' ')}"
           tags_with_dots = tags_to_delete.map{ |tag| tag.prepend(':refs/tags/') }.join(' ')
           system "git push origin #{tags_with_dots}"
