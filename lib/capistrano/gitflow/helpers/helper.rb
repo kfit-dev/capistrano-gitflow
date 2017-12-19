@@ -214,6 +214,9 @@ module CapistranoGitFlow
 
     def gitflow_cleanup_tags
       return if fetch(:gitflow_keep_tags).nil?
+      # First Prune Tags that are no longer on the remote
+      system "git fetch --prune origin '+refs/tags/*:refs/tags/*'"
+
       tags = `git log --tags  --pretty="format:%at %D" | grep 'tag:' |sort -n | awk '{$1=""; print $0}' | tr "," "\n"| sed 's/tag:*//' | sed -e 's/^[ \t]*//'`
       tags = tags.split.reject{|tag| tag.nil? || tag.empty?  }
       tags = tags.select { |tag| tag =~ /^(staging|production){1}-.*/ }
